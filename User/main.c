@@ -1,57 +1,46 @@
 #include "stm32f10x.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "led.h"
-#include "timing.h"
-#include "light_sensor.h"
-#include "oled.h"
-#include "ds18b20.h"
-#include "delay.h"
-#include "app_light.h"
-#include "app_temp.h"
-#include "joystick.h"
-#include "app_ui.h"
 #include "usart.h"
-#include "app_uart_practice.h"
-#include "mpu6050.h"
-#include "app_attitude_stream.h"
+#include "rtos_tasks.h"
 
-#define APP_UART_PRACTICE_ENABLE  0
-
+/*
+ * 初始化最小 FreeRTOS 练习工程并启动任务调度。
+ *
+ * 使用四位抢占优先级分组，使 Cortex-M3 中断优先级与
+ * FreeRTOSConfig.h 中的中断配置一致。完成 LED 和 USART1
+ * 初始化后创建 LED_Task 与 UART_Test_Task，随后启动调度器。
+ *
+ * 参数：
+ * 无。
+ *
+ * 返回值：
+ * 正常情况下调度器启动后不会返回。
+ *
+ * 副作用：
+ * 配置 NVIC、GPIOA、USART1、SysTick，并从 FreeRTOS 堆中
+ * 分配任务控制块和任务栈。
+ */
 int main(void)
 {
-    delay_init();
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 
     LED_Init();
-    Timing_Init();
     uart_init(115200);
 
-    LightSensor_Init();
-    LightSensor_ADC_Init();
-
-    OLED_Init();
-    DS18B20_Init();
-    Joystick_Init();
-    MPU6050_Init();
-
-    OLED_Clear();
-
-    App_Light_Init();
-    App_Temp_Init();
-    App_UI_Init();
-#if APP_UART_PRACTICE_ENABLE
-    App_UARTPractice_Init();
-#endif
-    App_AttitudeStream_Init();
-
-    while (1)
+    if (RTOS_Tasks_Create() != pdPASS)
     {
-        App_Light_Task();
-        App_Temp_Task();
-        MPU6050_Task();
-        App_AttitudeStream_Task();
-        Joystick_Task();
-        App_UI_Task();
-#if APP_UART_PRACTICE_ENABLE
-        App_UARTPractice_Task();
-#endif
+        Traffic_AllOff();
+        for (;;)
+        {
+        }
+    }
+
+    vTaskStartScheduler();
+
+    Traffic_AllOff();
+    for (;;)
+    {
     }
 }

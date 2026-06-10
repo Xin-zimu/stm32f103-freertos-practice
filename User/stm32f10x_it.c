@@ -22,10 +22,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x_it.h" 
-#include "timing.h"
-
-extern volatile unsigned int g_ms;
+#include "stm32f10x_it.h"
  
 void NMI_Handler(void)
 {
@@ -64,31 +61,8 @@ void UsageFault_Handler(void)
   }
 }
  
-void SVC_Handler(void)
-{
-}
- 
 void DebugMon_Handler(void)
 {
-}
- 
-void PendSV_Handler(void)
-{
-}
- 
-void SysTick_Handler(void)
-{
-	
-}
-
-void TIM3_IRQHandler(void)
-{
-    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
-    {
-        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-
-        Timing_IncTick();
-    }
 }
 
 
