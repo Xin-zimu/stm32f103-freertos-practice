@@ -130,3 +130,12 @@ Project/led.uvprojx
 
 下载运行后，同时检查 LED 切换和 USART1 周期文本。两种现象都正常，说明任务
 创建、系统节拍、上下文切换和基础外设调用已经工作。
+
+## 学习文档
+
+第一次学习 RTOS 时，请按顺序阅读：
+
+- `docs/FREERTOS_STAGE1_LEARNING_GUIDE.md`
+
+文档从裸机轮询讲起，逐项解释本工程使用的任务代码、FreeRTOS 配置、内存、
+SysTick/PendSV/SVC、串口中断发送方式，并提供可亲手验证的练习。
